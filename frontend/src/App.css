@@ -1,0 +1,44 @@
+.header-divider {
+  border: none;
+  height: 2px;
+  margin: 0;
+  background-color: red;
+}
+
+.footer-divider {
+  border: none;
+  height: 2px;
+  margin: 0;
+  background-color: red;
+  margin-top: 35%;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+.App-body {
+  margin-left: 6%;
+}
+
+.App-header {
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: calc(10px + 2vmin);
+  color: red;
+}
+
+.App-footer {
+  padding: 10px;
+  text-align: center;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+
