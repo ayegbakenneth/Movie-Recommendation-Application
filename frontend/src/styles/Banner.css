@@ -1,0 +1,31 @@
+.jh-banner {
+	color: black;
+	text-align: right;
+	padding: 32px;
+	
+	display: flex;
+	justify-content: flex-end;
+	flex-direction: row;
+	align-items: center;
+}
+
+.jh-title {
+	padding-left: 32px;
+}
+
+.jh-logo {
+	height: 45px;
+	width: 45px;
+}
+
+#menu {
+	display: flex;
+	flex-direction: row;
+	align-items: start;
+	gap: 20px;
+}
+
+#pageHeader {
+	text-align: center;
+	font-size: 50px;
+}

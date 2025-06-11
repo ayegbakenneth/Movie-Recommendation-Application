@@ -1,29 +1,35 @@
-import ALX from './ALX.jpg';
-import './App.css';
-import { getFullYear, getFooterCopy } from './utils'
+import React, { useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={ALX} className="App-logo" alt="logo" />
-        <h1>School dashboard</h1>
-      </header>
-      <hr className="header-divider" />
-      <div className="App-body">
-        <p>Login to access the full dashboard</p>
-        <label Htmlfor="email">Email:</label>
-        <input type="email" id="email"></input>
-        <label Htmlfor="password">Password</label>
-        <input type="password" id="password"></input>
-        <button>OK</button>
-      </div>
-      <hr className="footer-divider" />
-      <footer className="App-footer">
-        <p>Copyright {getFullYear()} - {getFooterCopy(true)}</p>
-      </footer>
-    </div>
+const App = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    !!localStorage.getItem("token")
   );
-}
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsAuthenticated(false);
+  };
+
+  return (
+    <Router>
+      <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogout} />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route
+          path="/login"
+          element={<Login setAuth={setIsAuthenticated} />}
+        />
+        <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+    </Router>
+  );
+};
 
 export default App;
