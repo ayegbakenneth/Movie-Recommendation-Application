@@ -10,7 +10,7 @@ const Home = () => {
   useEffect(() => {
     const fetchMovies = async () => {
       const response = await axios.get(
-        ``
+        `https://api.themoviedb.org/3/movie/popular?api_key=70302ba9f2708548fa805fb8dd10fa95`
       );
       setMovies(response.data.results);
     };
