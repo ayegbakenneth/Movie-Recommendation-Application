@@ -1,47 +1,43 @@
-const express = require('express');
-const dotenv = require('dotenv');
-const cors = require('cors');
-const mongoose = require('mongoose');
-const authRoute = require('./routes/auth');
-const moviesRoute = require('./routes/movies');
-const usersRoute = require('./routes/users');
+const http = require('http');
 
-// Initialize dotenv for environment variables
-dotenv.config();
-
-const app = express();
-
-// Middleware to handle CORS
-app.use(cors());
-
-// Middleware to parse JSON request bodies
-app.use(express.json());
-
-// Database Connection
-mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
-.then(() => {
-    console.log('Successfully connected to MongoDB Atlas!');
-})
-.catch((error) => {
-    console.error('Unable to connect to MongoDB Atlas!', error);
+const hostname = 'localhost';
+let port = 5000;
+let app = require('./app');
+app.set('port', hostname || 5000)
+const normalizePort = val =>{
+port = parseInt(val, 10);
+  if (isNaN(port)) {
+    return val;
+  } if (port >= 0){
+  return port;
+}
+return false;
+};
+port = normalizePort(port, hostname || 5000);
+app.set('port', port)
+const errorHandler = error => {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+  const address = server.address();
+  const bind = typeof address === 'string' ? 'pipe' + address : 'port:' + port;
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + 'requires elevated privileges.');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + 'is already in use.');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+};
+const server = http.createServer(app);
+server.on('error', errorHandler);
+server.on('listening', () => {
+  const bind = typeof address === 'string' ? 'pipe' + address : + port;
+  console.log('listening on' + bind);
 });
-
-// Routes
-app.use('/api/auth', authRoute); // Handles /api/auth/register and /api/auth/login
-app.use('/api/movies', moviesRoute); // Handles movie-related routes (e.g., search)
-app.use('/api/users', usersRoute); // Handles user-related routes (favorites, watchlists, profile)
-
-// Global Error Handling Middleware
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ error: 'Something went wrong!' });
-});
-
-// Start the server
-const port = process.env.PORT || 5000;
-app.listen(port, () => {
-    console.log(`Server listening on http://localhost:${port}`);
-});
+server.listen(port);
