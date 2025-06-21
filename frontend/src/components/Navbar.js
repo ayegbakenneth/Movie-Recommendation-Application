@@ -13,20 +13,20 @@ const Navbar = ({ isAuthenticated, onLogout }) => {
   return (
     <nav className="navbar">
       <Banner>
-        <img src={logo} alt='Jungle House' className='jh-logo' />
+        <img src={logo} alt='Movies House' className='jh-logo' />
         <h1 className='jh-title'>Movies House</h1>
       </Banner>
       <ul id='menu'>
-        <li><Link to="/">Home</Link></li>
+        <li><Link to="/" className="btn">Home</Link></li>
         {isAuthenticated ? (
           <>
-            <li><Link to="/dashboard">Dashboard</Link></li>
+            <li><Link to="/dashboard" className="btn">Dashboard</Link></li>
             <li><button onClick={handleLogout}>Logout</button></li>
           </>
         ) : (
           <>
-            <li><Link to="/login">Login</Link></li>
-            <li><Link to="/register">Register</Link></li>
+            <li><Link to="/login" className="btn">Login</Link></li>
+            <li><Link to="/register" className='btn'>Register</Link></li>
           </>
         )}
       </ul>

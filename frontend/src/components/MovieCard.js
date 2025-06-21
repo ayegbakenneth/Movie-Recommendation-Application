@@ -1,14 +1,10 @@
 import React from "react";
 
 const MovieCard = ({ movie, onFavorite, onWatchlist, isFavorite, isWatchlist }) => {
-  const posterUrl = movie.poster_path
-    ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-    : "https://via.placeholder.com/500x750?text=No+Image";
-
   return (
     <div className="movie-card">
       <img
-        src={posterUrl}
+        src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
         alt={movie.title}
         className="movie-poster"
       />

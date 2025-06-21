@@ -5,32 +5,134 @@ import MovieCard from "../components/MovieCard";
 const Dashboard = () => {
   const [favorites, setFavorites] = useState([]);
   const [watchlist, setWatchlist] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  // Fetch user's favorite and watchlist movies on component mount
   useEffect(() => {
     const fetchUserMovies = async () => {
       const token = localStorage.getItem("token");
-      const response = await axios.get("http://localhost:5000/api/users/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setFavorites(response.data.favorites);
-      setWatchlist(response.data.watchlists);
+      if (!token) {
+        alert("You need to be logged in to view your movies.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await axios.get("http://localhost:5000/api/users/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setFavorites(response.data.favorites || []);
+        setWatchlist(response.data.watchlists || []);
+      } catch (error) {
+        console.error("Failed to fetch user movies:", error);
+        alert("Failed to fetch your movies. Please try again.");
+      } finally {
+        setLoading(false);
+      }
     };
     fetchUserMovies();
   }, []);
+
+  // Remove or add a movie to favorites
+  const handleFavorite = async (movie) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("You need to be logged in to perform this action.");
+      return;
+    }
+
+    try {
+      if (favorites.some((fav) => fav._id === movie._id)) {
+        // Remove from favorites
+        await axios.delete(`http://localhost:5000/api/users/favorites/${movie._id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setFavorites(favorites.filter((fav) => fav._id !== movie._id));
+      } else {
+        // Add to favorites
+        await axios.post(
+          "http://localhost:5000/api/users/favorites",
+          { movieId: movie._id },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setFavorites([...favorites, movie]);
+      }
+    } catch (error) {
+      console.error("Failed to update favorites:", error);
+      alert("Failed to update your favorites. Please try again.");
+    }
+  };
+
+  // Remove or add a movie to watchlist
+  const handleWatchlist = async (movie) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("You need to be logged in to perform this action.");
+      return;
+    }
+
+    try {
+      if (watchlist.some((wl) => wl._id === movie._id)) {
+        // Remove from watchlist
+        await axios.delete(`http://localhost:5000/api/users/watchlists/${movie._id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setWatchlist(watchlist.filter((wl) => wl._id !== movie._id));
+      } else {
+        // Add to watchlist
+        await axios.post(
+          "http://localhost:5000/api/users/watchlists",
+          { movieId: movie._id },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setWatchlist([...watchlist, movie]);
+      }
+    } catch (error) {
+      console.error("Failed to update watchlist:", error);
+      alert("Failed to update your watchlist. Please try again.");
+    }
+  };
+
+  // Display a loading screen while data is fetched
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="dashboard">
       <h2>My Favorites</h2>
       <div className="movie-list">
-        {favorites.map((movie) => (
-          <MovieCard key={movie._id} movie={movie} />
-        ))}
+        {favorites.length > 0 ? (
+          favorites.map((movie) => (
+            <MovieCard
+              key={movie._id}
+              movie={movie}
+              onFavorite={handleFavorite}
+              onWatchlist={handleWatchlist}
+              isFavorite={true}
+              isWatchlist={watchlist.some((wl) => wl._id === movie._id)}
+            />
+          ))
+        ) : (
+          <p>No movies in your favorites yet.</p>
+        )}
       </div>
       <h2>My Watchlist</h2>
       <div className="movie-list">
-        {watchlist.map((movie) => (
-          <MovieCard key={movie._id} movie={movie} />
-        ))}
+        {watchlist.length > 0 ? (
+          watchlist.map((movie) => (
+            <MovieCard
+              key={movie._id}
+              movie={movie}
+              onFavorite={handleFavorite}
+              onWatchlist={handleWatchlist}
+              isFavorite={favorites.some((fav) => fav._id === movie._id)}
+              isWatchlist={true}
+            />
+          ))
+        ) : (
+          <p>No movies in your watchlist yet.</p>
+        )}
       </div>
     </div>
   );

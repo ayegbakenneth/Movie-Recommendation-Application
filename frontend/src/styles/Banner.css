@@ -1,5 +1,10 @@
+.navbar {
+	background-color: black;
+	color: white;
+	
+}
+
 .jh-banner {
-	color: black;
 	text-align: right;
 	padding: 32px;
 	
@@ -10,6 +15,7 @@
 }
 
 .jh-title {
+	color: white;
 	padding-left: 32px;
 }
 
@@ -22,10 +28,21 @@
 	display: flex;
 	flex-direction: row;
 	align-items: start;
-	gap: 20px;
+	gap: 30px;
+	text-decoration: none;
+	list-style: none;
+	
+}
+
+.btn{
+
+	color: white;
+	text-decoration: none;
+	font-size: larger;
 }
 
 #pageHeader {
 	text-align: center;
 	font-size: 50px;
+	color: red;
 }

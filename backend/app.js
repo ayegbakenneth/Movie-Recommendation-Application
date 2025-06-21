@@ -1,30 +1,32 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const mongoose = require('mongoose');
 const authRoute = require('./routes/auth');
 const moviesRoute = require('./routes/movies');
 const usersRoute = require('./routes/users');
 
-// Initialize dotenv for environment variables
+// Configuration
 dotenv.config();
+
 
 const app = express();
 
-// Middleware to handle CORS
+// Middlewares
 app.use(cors());
 
-// Middleware to parse JSON request bodies
-app.use(express.json());
-
 // Database Connection
-mongoose.connect(process.env.MONGO_URI)
+const db = mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         console.log('Successfully connected to MongoDB Atlas!');
     })
     .catch((error) => {
         console.error('Unable to connect to MongoDB Atlas!', error);
     });
+
+app.use(express.json());
+
+
 // Routes
 app.use('/api/auth', authRoute); // Handles /api/auth/register and /api/auth/login
 app.use('/api/movies', moviesRoute); // Handles movie-related routes (e.g., search)
