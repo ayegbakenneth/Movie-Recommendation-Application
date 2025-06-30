@@ -5,6 +5,8 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import { MovieProvider } from "./context/MovieContext";
+import Footer from "./components/Footer";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -18,16 +20,23 @@ const App = () => {
 
   return (
     <Router>
-      <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogout} />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route
-          path="/login"
-          element={<Login setAuth={setIsAuthenticated} />}
-        />
-        <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-      </Routes>
+      <MovieProvider>
+        <div className="app-container">
+          <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogout} />
+          <div className="main-content">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route
+                path="/login"
+                element={<Login setAuth={setIsAuthenticated} />}
+              />
+              <Route path="/register" element={<Register />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Routes>
+          </div>
+          <Footer />
+        </div>
+      </MovieProvider>
     </Router>
   );
 };

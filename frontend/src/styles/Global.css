@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;500&display=swap');
+
+/* CSS Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* CSS Variables */
+:root {
+  --primary-color: #d32f2f;
+  --secondary-color: #fbc02d;
+  --background-color: #f5f5f5;
+  --text-color: #212121;
+  --card-background: #ffffff;
+  --spacing-unit: 1rem;
+  --font-family-heading: 'Poppins', sans-serif;
+  --font-family-body: 'Roboto', sans-serif;
+}
+
+body {
+  font-family: var(--font-family-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+/* Shared Form Styles */
+form {
+  background-color: var(--card-background);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  padding: calc(var(--spacing-unit) * 2);
+  width: 100%;
+  max-width: 500px;
+  box-sizing: border-box;
+  margin: calc(var(--spacing-unit) * 2) auto;
+  border-radius: 8px;
+}
+
+input {
+  width: 100%;
+  padding: var(--spacing-unit);
+  margin: var(--spacing-unit) 0;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  border-radius: 5px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-heading);
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: var(--spacing-unit);
+  color: var(--primary-color);
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  /* This padding is now handled on a page-by-page basis */
+}
+
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
