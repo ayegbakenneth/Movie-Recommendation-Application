@@ -10,65 +10,76 @@ const Home = () => {
   const [watchlist, setWatchlist] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Check if the user is logged in (based on token in localStorage)
   useEffect(() => {
     const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token); // Convert token to boolean
+    if (token) {
+      setIsLoggedIn(true);
+      // Fetch user's movies if logged in
+      const fetchUserMovies = async () => {
+        try {
+          const response = await axios.get("http://localhost:5000/api/users/me", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setFavorites(response.data.favorites || []);
+          setWatchlist(response.data.watchlists || []);
+        } catch (error) {
+          console.error("Failed to fetch user movies:", error);
+        }
+      };
+      fetchUserMovies();
+    }
   }, []);
 
   // Fetch popular movies from TMDB API
   useEffect(() => {
     const fetchMovies = async () => {
-      const response = await axios.get(
-        `https://api.themoviedb.org/3/movie/popular?api_key=`
-      );
-      setMovies(response.data.results);
+      try {
+        const response = await axios.get(
+          `https://api.themoviedb.org/3/movie/popular?api_key=`
+        );
+        setMovies(response.data.results);
+      } catch (error) {
+        console.error("Failed to fetch popular movies:", error);
+      }
     };
     fetchMovies();
   }, []);
 
   // Add or remove a movie from favorites
   const handleFavorite = async (movie) => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    alert("You need to be logged in to perform this action.");
-    return;
-  }
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("You must be logged in to add movies to favorites.");
+        return;
+      }
 
-  try {
-    // Check if the movie is already in favorites
-    if (favorites.some((fav) => fav.movieId === movie.id)) {
-      // Remove from favorites
-      await axios.delete(`http://localhost:5000/api/users/favorites/${movie.id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setFavorites(favorites.filter((fav) => fav.movieId !== movie.id));
-      alert("Movie removed from favorites.");
-    } else {
-      // Add to favorites
-      const response = await axios.post(
-        "http://localhost:5000/api/users/favorites",
-        {
-          movieId: movie.id,
-          title: movie.title,
-          posterPath: movie.poster_path,
-          releaseDate: movie.release_date,
-          rating: movie.vote_average,
-          genreIds: movie.genre_ids,
-        },
-        {
+      if (favorites.some((fav) => String(fav.movieId) === String(movie.id))) {
+        // Remove from favorites
+        await axios.delete(`http://localhost:5000/api/users/favorites/${movie.id}`, {
           headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      setFavorites([...favorites, response.data.movie]);
-      alert("Movie added to favorites.");
+        });
+        setFavorites(favorites.filter((fav) => String(fav.movieId) !== String(movie.id)));
+      } else {
+        // Add to favorites
+        await axios.post(
+          "http://localhost:5000/api/users/favorites",
+          {
+            movieId: movie.id,
+            title: movie.title,
+            poster_path: movie.poster_path,
+            release_date: movie.release_date,
+            vote_average: movie.vote_average,
+            genre_ids: movie.genre_ids,
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setFavorites([...favorites, movie]);
+      }
+    } catch (error) {
+      console.error("Failed to update favorites:", error);
     }
-  } catch (error) {
-    console.error("Failed to update favorites:", error);
-    alert("Failed to update favorites. Please try again.");
-  }
-};
-
+  };
 
   // Add or remove a movie from watchlist
   const handleWatchlist = async (movie) => {
@@ -79,17 +90,24 @@ const Home = () => {
         return;
       }
 
-      if (watchlist.some((wl) => wl.id === movie.id)) {
+      if (watchlist.some((wl) => String(wl.movieId) === String(movie.id))) {
         // Remove from watchlist
         await axios.delete(`http://localhost:5000/api/users/watchlists/${movie.id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setWatchlist(watchlist.filter((wl) => wl.id !== movie.id));
+        setWatchlist(watchlist.filter((wl) => String(wl.movieId) !== String(movie.id)));
       } else {
         // Add to watchlist
         await axios.post(
           "http://localhost:5000/api/users/watchlists",
-          { movieId: movie.id, title: movie.title, poster_path: movie.poster_path },
+          {
+            movieId: movie.id,
+            title: movie.title,
+            poster_path: movie.poster_path,
+            release_date: movie.release_date,
+            vote_average: movie.vote_average,
+            genre_ids: movie.genre_ids,
+          },
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setWatchlist([...watchlist, movie]);
@@ -109,8 +127,8 @@ const Home = () => {
             movie={movie}
             onFavorite={handleFavorite}
             onWatchlist={handleWatchlist}
-            isFavorite={favorites.some((fav) => fav.id === movie.id)}
-            isWatchlist={watchlist.some((wl) => wl.id === movie.id)}
+            isFavorite={favorites.some((fav) => String(fav.movieId) === String(movie.id))}
+            isWatchlist={watchlist.some((wl) => String(wl.movieId) === String(movie.id))}
           />
         ))}
       </div>

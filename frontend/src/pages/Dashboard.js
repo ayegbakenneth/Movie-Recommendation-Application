@@ -42,17 +42,24 @@ const Dashboard = () => {
     }
 
     try {
-      if (favorites.some((fav) => fav._id === movie._id)) {
+      if (favorites.some((fav) => fav.movieId === movie.movieId)) {
         // Remove from favorites
-        await axios.delete(`http://localhost:5000/api/users/favorites/${movie._id}`, {
+        await axios.delete(`http://localhost:5000/api/users/favorites/${movie.movieId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setFavorites(favorites.filter((fav) => fav._id !== movie._id));
+        setFavorites(favorites.filter((fav) => fav.movieId !== movie.movieId));
       } else {
         // Add to favorites
         await axios.post(
           "http://localhost:5000/api/users/favorites",
-          { movieId: movie._id },
+          {
+            movieId: movie.movieId,
+            title: movie.title,
+            poster_path: movie.poster_path,
+            release_date: movie.releaseDate,
+            vote_average: movie.rating,
+            genre_ids: movie.genreIds,
+          },
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setFavorites([...favorites, movie]);
@@ -72,17 +79,24 @@ const Dashboard = () => {
     }
 
     try {
-      if (watchlist.some((wl) => wl._id === movie._id)) {
+      if (watchlist.some((wl) => wl.movieId === movie.movieId)) {
         // Remove from watchlist
-        await axios.delete(`http://localhost:5000/api/users/watchlists/${movie._id}`, {
+        await axios.delete(`http://localhost:5000/api/users/watchlists/${movie.movieId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setWatchlist(watchlist.filter((wl) => wl._id !== movie._id));
+        setWatchlist(watchlist.filter((wl) => wl.movieId !== movie.movieId));
       } else {
         // Add to watchlist
         await axios.post(
           "http://localhost:5000/api/users/watchlists",
-          { movieId: movie._id },
+          {
+            movieId: movie.movieId,
+            title: movie.title,
+            poster_path: movie.poster_path,
+            release_date: movie.releaseDate,
+            vote_average: movie.rating,
+            genre_ids: movie.genreIds,
+          },
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setWatchlist([...watchlist, movie]);
@@ -105,12 +119,12 @@ const Dashboard = () => {
         {favorites.length > 0 ? (
           favorites.map((movie) => (
             <MovieCard
-              key={movie._id}
+              key={movie.movieId}
               movie={movie}
               onFavorite={handleFavorite}
               onWatchlist={handleWatchlist}
               isFavorite={true}
-              isWatchlist={watchlist.some((wl) => wl._id === movie._id)}
+              isWatchlist={watchlist.some((wl) => wl.movieId === movie.movieId)}
             />
           ))
         ) : (
@@ -122,11 +136,11 @@ const Dashboard = () => {
         {watchlist.length > 0 ? (
           watchlist.map((movie) => (
             <MovieCard
-              key={movie._id}
+              key={movie.movieId}
               movie={movie}
               onFavorite={handleFavorite}
               onWatchlist={handleWatchlist}
-              isFavorite={favorites.some((fav) => fav._id === movie._id)}
+              isFavorite={favorites.some((fav) => fav.movieId === movie.movieId)}
               isWatchlist={true}
             />
           ))

@@ -1,6 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const User = require('../models/user');
 const Movie = require('../models/Movie');
 const router = express.Router();
 
@@ -33,23 +33,26 @@ router.get('/me', authenticate, async (req, res) => {
 // Add a movie to favorites
 router.post('/favorites', authenticate, async (req, res) => {
   try {
-    const { movieId, title, posterPath, releaseDate, rating, genreIds } = req.body;
-
-    console.log("Request body:", req.body); // Debugging request body
+    const { movieId, title, poster_path, release_date, vote_average, genre_ids } = req.body;
 
     // Fetch the user
     const user = await User.findById(req.userId);
     if (!user) {
-      console.error("User not found for ID:", req.userId); // Debugging
       return res.status(404).json({ error: 'User not found' });
     }
 
     // Check if the movie already exists in the database
     let movie = await Movie.findOne({ movieId });
     if (!movie) {
-      movie = new Movie({ movieId, title, posterPath, releaseDate, rating, genreIds });
+      movie = new Movie({
+        movieId,
+        title,
+        poster_path,
+        releaseDate: release_date,
+        rating: vote_average,
+        genreIds: genre_ids,
+      });
       await movie.save();
-      console.log("Movie saved to database:", movie); // Debugging movie save
     }
 
     // Add the movie to the user's favorites
@@ -66,15 +69,41 @@ router.post('/favorites', authenticate, async (req, res) => {
     res.status(500).json({ error: 'Failed to add movie to favorites' });
   }
 });
+
+// Remove a movie from favorites
+router.delete('/favorites/:movieId', authenticate, async (req, res) => {
+  try {
+    const { movieId } = req.params;
+
+    const movie = await Movie.findOne({ movieId });
+    if (!movie) return res.status(404).json({ error: 'Movie not found' });
+
+    const user = await User.findById(req.userId);
+    user.favorites = user.favorites.filter(fav => fav.toString() !== movie._id.toString());
+    await user.save();
+
+    res.json({ message: 'Movie removed from favorites' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to remove movie from favorites' });
+  }
+});
+
 // Add a movie to watchlist
 router.post('/watchlists', authenticate, async (req, res) => {
   try {
-    const { movieId, title, posterPath, releaseDate, rating, genreIds } = req.body;
+    const { movieId, title, poster_path, release_date, vote_average, genre_ids } = req.body;
 
     // Check if the movie already exists in the database
     let movie = await Movie.findOne({ movieId });
     if (!movie) {
-      movie = new Movie({ movieId, title, posterPath, releaseDate, rating, genreIds });
+      movie = new Movie({
+        movieId,
+        title,
+        poster_path,
+        releaseDate: release_date,
+        rating: vote_average,
+        genreIds: genre_ids,
+      });
       await movie.save();
     }
 

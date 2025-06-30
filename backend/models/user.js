@@ -10,8 +10,6 @@ const UserSchema = new mongoose.Schema({
   watchlists: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }],
 });
 
-module.exports = mongoose.model('User', UserSchema);
-
 // Hash password before saving
 UserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
