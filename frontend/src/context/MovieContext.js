@@ -22,7 +22,7 @@ export const MovieProvider = ({ children }) => {
   const fetchPopularMovies = async () => {
     try {
       const response = await axios.get(
-        `https://api.themoviedb.org/3/movie/popular?api_key=`
+        `https://api.themoviedb.org/3/movie/popular?api_key=70302ba9f2708548fa805fb8dd10fa95`
       );
       setMovies(response.data.results);
     } catch (error) {
@@ -51,17 +51,19 @@ export const MovieProvider = ({ children }) => {
       return;
     }
 
+    const movieId = movie.id || movie.movieId;
+
     try {
-      if (favorites.some((fav) => String(fav.movieId) === String(movie.id))) {
-        await axios.delete(`http://localhost:5000/api/users/favorites/${movie.id}`, {
+      if (favorites.some((fav) => String(fav.movieId) === String(movieId))) {
+        await axios.delete(`http://localhost:5000/api/users/favorites/${movieId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setFavorites(favorites.filter((fav) => String(fav.movieId) !== String(movie.id)));
+        setFavorites(favorites.filter((fav) => String(fav.movieId) !== String(movieId)));
       } else {
         await axios.post(
           'http://localhost:5000/api/users/favorites',
           {
-            movieId: movie.id,
+            movieId: movieId,
             title: movie.title,
             poster_path: movie.poster_path,
             release_date: movie.release_date,
@@ -70,7 +72,6 @@ export const MovieProvider = ({ children }) => {
           },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        // To get the full movie object with MongoDB _id, we should refetch user movies
         fetchUserMovies(token);
       }
     } catch (error) {
@@ -85,17 +86,19 @@ export const MovieProvider = ({ children }) => {
       return;
     }
 
+    const movieId = movie.id || movie.movieId;
+
     try {
-      if (watchlist.some((wl) => String(wl.movieId) === String(movie.id))) {
-        await axios.delete(`http://localhost:5000/api/users/watchlists/${movie.id}`, {
+      if (watchlist.some((wl) => String(wl.movieId) === String(movieId))) {
+        await axios.delete(`http://localhost:5000/api/users/watchlists/${movieId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setWatchlist(watchlist.filter((wl) => String(wl.movieId) !== String(movie.id)));
+        setWatchlist(watchlist.filter((wl) => String(wl.movieId) !== String(movieId)));
       } else {
         await axios.post(
           'http://localhost:5000/api/users/watchlists',
           {
-            movieId: movie.id,
+            movieId: movieId,
             title: movie.title,
             poster_path: movie.poster_path,
             release_date: movie.release_date,
@@ -104,7 +107,6 @@ export const MovieProvider = ({ children }) => {
           },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        // To get the full movie object with MongoDB _id, we should refetch user movies
         fetchUserMovies(token);
       }
     } catch (error) {
