@@ -13,9 +13,11 @@ const MovieCard = ({ movie, onFavorite, onWatchlist, isFavorite, isWatchlist }) 
         alt={movie.title}
         className="movie-poster"
       />
-      <h3>{movie.title}</h3>
-      <p>Release Date: {releaseDate || "N/A"}</p>
-      <p>Rating: {rating || "N/A"}/10</p>
+      <div className="movie-info">
+        <h3>{movie.title}</h3>
+        <p>Release Date: {releaseDate || "N/A"}</p>
+        <p>Rating: {rating || "N/A"}/10</p>
+      </div>
       <div className="movie-actions">
         <button onClick={() => onFavorite(movie)}>
           {isFavorite ? "Remove from Favorites" : "Add to Favorites"}

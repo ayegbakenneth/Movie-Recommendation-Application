@@ -4,7 +4,15 @@ import MovieCard from '../components/MovieCard';
 import '../styles/Dashboard.css';
 
 const Dashboard = () => {
-  const { favorites, watchlist, loading, handleFavorite, handleWatchlist } = useContext(MovieContext);
+  const {
+    favorites,
+    watchlist,
+    loading,
+    handleFavorite,
+    handleWatchlist,
+    favoriteSet,
+    watchlistSet,
+  } = useContext(MovieContext);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -24,7 +32,7 @@ const Dashboard = () => {
                 onFavorite={handleFavorite}
                 onWatchlist={handleWatchlist}
                 isFavorite={true}
-                isWatchlist={watchlist.some((wl) => wl.movieId === movie.movieId)}
+                isWatchlist={watchlistSet.has(String(movie.movieId))}
               />
             ))
           ) : (
@@ -42,7 +50,7 @@ const Dashboard = () => {
                 movie={movie}
                 onFavorite={handleFavorite}
                 onWatchlist={handleWatchlist}
-                isFavorite={favorites.some((fav) => fav.movieId === movie.movieId)}
+                isFavorite={favoriteSet.has(String(movie.movieId))}
                 isWatchlist={true}
               />
             ))

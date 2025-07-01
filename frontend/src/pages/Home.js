@@ -5,7 +5,14 @@ import '../styles/Banner.css';
 import '../styles/Movie.css';
 
 const Home = () => {
-  const { movies, favorites, watchlist, loading, handleFavorite, handleWatchlist } = useContext(MovieContext);
+  const {
+    movies,
+    loading,
+    handleFavorite,
+    handleWatchlist,
+    favoriteSet,
+    watchlistSet,
+  } = useContext(MovieContext);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -22,8 +29,8 @@ const Home = () => {
               movie={movie}
               onFavorite={handleFavorite}
               onWatchlist={handleWatchlist}
-              isFavorite={favorites.some((fav) => String(fav.movieId) === String(movie.id))}
-              isWatchlist={watchlist.some((wl) => String(wl.movieId) === String(movie.id))}
+              isFavorite={favoriteSet.has(String(movie.id))}
+              isWatchlist={watchlistSet.has(String(movie.id))}
             />
           ))}
         </div>

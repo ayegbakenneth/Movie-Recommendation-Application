@@ -1,22 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { MovieContext } from "../context/MovieContext";
 import '../styles/Login.css'
 
-const Login = ({ setAuth }) => {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { login } = useContext(MovieContext);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/login", {
-        email,
-        password,
-      });
-      localStorage.setItem("token", response.data.token);
-      setAuth(true);
+      await login({ email, password });
       navigate("/dashboard");
     } catch (error) {
       alert("Invalid login credentials");

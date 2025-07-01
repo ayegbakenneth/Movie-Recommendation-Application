@@ -6,7 +6,7 @@ const router = express.Router();
 
 // Middleware to authenticate user using JWT
 const authenticate = (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1];
+  const token = req.cookies.token;
   if (!token) return res.status(401).json({ error: 'Unauthorized' });
 
   try {

@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 
 export const MovieContext = createContext();
@@ -10,19 +10,34 @@ export const MovieProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  const favoriteSet = useMemo(() => new Set(favorites.map((fav) => String(fav.movieId))), [favorites]);
+  const watchlistSet = useMemo(() => new Set(watchlist.map((wl) => String(wl.movieId))), [watchlist]);
+
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      setIsLoggedIn(true);
-      fetchUserMovies(token);
-    }
+    const checkAuth = async () => {
+      try {
+        // The cookie will be sent automatically by the browser
+        const response = await axios.get('http://localhost:5000/api/users/me', {
+          withCredentials: true,
+        });
+        if (response.data) {
+          setIsLoggedIn(true);
+          setFavorites(response.data.favorites || []);
+          setWatchlist(response.data.watchlists || []);
+        }
+      } catch (error) {
+        setIsLoggedIn(false);
+        console.log('User not authenticated');
+      }
+    };
+    checkAuth();
     fetchPopularMovies();
   }, []);
 
   const fetchPopularMovies = async () => {
     try {
       const response = await axios.get(
-        `https://api.themoviedb.org/3/movie/popular?api_key=70302ba9f2708548fa805fb8dd10fa95`
+        `https://api.themoviedb.org/3/movie/popular?api_key=`
       );
       setMovies(response.data.results);
     } catch (error) {
@@ -32,10 +47,10 @@ export const MovieProvider = ({ children }) => {
     }
   };
 
-  const fetchUserMovies = async (token) => {
+  const fetchUserMovies = async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/users/me', {
-        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
       });
       setFavorites(response.data.favorites || []);
       setWatchlist(response.data.watchlists || []);
@@ -44,24 +59,33 @@ export const MovieProvider = ({ children }) => {
     }
   };
 
-  const handleFavorite = async (movie) => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      alert('You must be logged in to add movies to favorites.');
+  const handleMovieListAction = async (movie, listType) => {
+    if (!isLoggedIn) {
+      alert(`You must be logged in to manage your ${listType}.`);
       return;
     }
 
     const movieId = movie.id || movie.movieId;
+    const list = listType === 'favorites' ? favorites : watchlist;
+    const setList = listType === 'favorites' ? setFavorites : setWatchlist;
+    const listSet = listType === 'favorites' ? favoriteSet : watchlistSet;
+    const endpoint = `http://localhost:5000/api/users/${listType}`;
+
+    const movieInList = listSet.has(String(movieId));
+
+    // Optimistic update
+    if (movieInList) {
+      setList(list.filter((item) => String(item.movieId) !== String(movieId)));
+    } else {
+      setList([...list, { ...movie, movieId: String(movieId) }]);
+    }
 
     try {
-      if (favorites.some((fav) => String(fav.movieId) === String(movieId))) {
-        await axios.delete(`http://localhost:5000/api/users/favorites/${movieId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setFavorites(favorites.filter((fav) => String(fav.movieId) !== String(movieId)));
+      if (movieInList) {
+        await axios.delete(`${endpoint}/${movieId}`, { withCredentials: true });
       } else {
         await axios.post(
-          'http://localhost:5000/api/users/favorites',
+          endpoint,
           {
             movieId: movieId,
             title: movie.title,
@@ -70,48 +94,42 @@ export const MovieProvider = ({ children }) => {
             vote_average: movie.vote_average,
             genre_ids: movie.genre_ids,
           },
-          { headers: { Authorization: `Bearer ${token}` } }
+          { withCredentials: true }
         );
-        fetchUserMovies(token);
       }
+      // Refetch to ensure data consistency after the API call
+      fetchUserMovies();
     } catch (error) {
-      console.error('Failed to update favorites:', error);
+      console.error(`Failed to update ${listType}:`, error);
+      // Revert UI on error
+      if (movieInList) {
+        setList(list);
+      } else {
+        setList(list.filter((item) => String(item.movieId) !== String(movieId)));
+      }
+      alert(`Failed to update ${listType}. Please try again.`);
     }
   };
 
-  const handleWatchlist = async (movie) => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      alert('You must be logged in to add movies to watchlist.');
-      return;
-    }
+  const handleFavorite = (movie) => handleMovieListAction(movie, 'favorites');
+  const handleWatchlist = (movie) => handleMovieListAction(movie, 'watchlists');
 
-    const movieId = movie.id || movie.movieId;
-
-    try {
-      if (watchlist.some((wl) => String(wl.movieId) === String(movieId))) {
-        await axios.delete(`http://localhost:5000/api/users/watchlists/${movieId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setWatchlist(watchlist.filter((wl) => String(wl.movieId) !== String(movieId)));
-      } else {
-        await axios.post(
-          'http://localhost:5000/api/users/watchlists',
-          {
-            movieId: movieId,
-            title: movie.title,
-            poster_path: movie.poster_path,
-            release_date: movie.release_date,
-            vote_average: movie.vote_average,
-            genre_ids: movie.genre_ids,
-          },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        fetchUserMovies(token);
-      }
-    } catch (error) {
-      console.error('Failed to update watchlist:', error);
+  const login = async (credentials) => {
+    const response = await axios.post('http://localhost:5000/api/auth/login', credentials, {
+      withCredentials: true,
+    });
+    if (response.data.user) {
+      setIsLoggedIn(true);
+      await fetchUserMovies();
     }
+    return response;
+  };
+
+  const logout = async () => {
+    await axios.post('http://localhost:5000/api/auth/logout', {}, { withCredentials: true });
+    setIsLoggedIn(false);
+    setFavorites([]);
+    setWatchlist([]);
   };
 
   return (
@@ -124,6 +142,10 @@ export const MovieProvider = ({ children }) => {
         loading,
         handleFavorite,
         handleWatchlist,
+        favoriteSet,
+        watchlistSet,
+        login,
+        logout,
       }}
     >
       {children}
