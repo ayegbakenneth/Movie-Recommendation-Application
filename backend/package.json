@@ -4,9 +4,10 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "fullstack": "concurrently \"npm run backend\"\"npm run frontend\"",
     "frontend": "cd frontend && npm run dev",
-    "backend": "nodemon backend/server.js"
+    "backend": "nodemon server.js"
   },
   "keywords": [],
   "author": "",

@@ -18,9 +18,25 @@ const app = express();
 
 // Security Middlewares
 app.use(helmet());
+const allowedOrigins = ['http://localhost:3000'];
+const frontendURL = process.env.FRONTEND_URL;
+if (frontendURL) {
+  allowedOrigins.push(frontendURL);
+}
+
 app.use(
   cors({
-    origin: 'http://localhost:3000', // Allow only the frontend to access the API
+    origin: (origin, callback) => {
+      // allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg =
+          'The CORS policy for this site does not ' +
+          'allow access from the specified Origin.';
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
     credentials: true, // Allow cookies to be sent
   })
 );
