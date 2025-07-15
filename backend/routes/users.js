@@ -1,7 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const Movie = require('../models/Movie');
+const Movie = require('../models/movie');
 const router = express.Router();
 
 // Middleware to authenticate user using JWT
