@@ -9,6 +9,7 @@ export const MovieProvider = ({ children }) => {
   const [watchlist, setWatchlist] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [noResults, setNoResults] = useState(false);
 
   const favoriteSet = useMemo(() => new Set(favorites.map((fav) => String(fav.movieId))), [favorites]);
   const watchlistSet = useMemo(() => new Set(watchlist.map((wl) => String(wl.movieId))), [watchlist]);
@@ -42,6 +43,29 @@ export const MovieProvider = ({ children }) => {
       setMovies(response.data.results);
     } catch (error) {
       console.error('Failed to fetch popular movies:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const searchMovies = async (query) => {
+    setNoResults(false);
+    if (!query) {
+      setMovies([]);
+      return;
+    }
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `https://api.themoviedb.org/3/search/movie?api_key=70302ba9f2708548fa805fb8dd10fa95&query=${query}`
+      );
+      setMovies(response.data.results);
+      if (response.data.results.length === 0) {
+        setNoResults(true);
+      }
+    } catch (error) {
+      console.error('Failed to search movies:', error);
+      setNoResults(true);
     } finally {
       setLoading(false);
     }
@@ -146,6 +170,8 @@ export const MovieProvider = ({ children }) => {
         watchlistSet,
         login,
         logout,
+        searchMovies,
+        noResults,
       }}
     >
       {children}
