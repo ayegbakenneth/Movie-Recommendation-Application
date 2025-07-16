@@ -16,6 +16,9 @@ dotenv.config();
 
 const app = express();
 
+// Tell Express to trust the first proxy
+app.set('trust proxy', 1);
+
 // Security Middlewares
 app.use(helmet());
 const allowedOrigins = [
