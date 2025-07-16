@@ -1,6 +1,11 @@
 import React, { createContext, useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 
+const api = axios.create({
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api',
+  withCredentials: true,
+});
+
 export const MovieContext = createContext();
 
 export const MovieProvider = ({ children }) => {
@@ -17,10 +22,7 @@ export const MovieProvider = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // The cookie will be sent automatically by the browser
-        const response = await axios.get('http://localhost:5000/api/users/me', {
-          withCredentials: true,
-        });
+        const response = await api.get('/users/me');
         if (response.data) {
           setIsLoggedIn(true);
           setFavorites(response.data.favorites || []);
@@ -38,7 +40,7 @@ export const MovieProvider = ({ children }) => {
   const fetchPopularMovies = async () => {
     try {
       const response = await axios.get(
-        `https://api.themoviedb.org/3/movie/popular?api_key=`
+        `https://api.themoviedb.org/3/movie/popular?api_key=${process.env.REACT_APP_TMDB_API_KEY}`
       );
       setMovies(response.data.results);
     } catch (error) {
@@ -57,7 +59,7 @@ export const MovieProvider = ({ children }) => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `https://api.themoviedb.org/3/search/movie?api_key=70302ba9f2708548fa805fb8dd10fa95&query=${query}`
+        `https://api.themoviedb.org/3/search/movie?api_key=${process.env.REACT_APP_TMDB_API_KEY}&query=${query}`
       );
       setMovies(response.data.results);
       if (response.data.results.length === 0) {
@@ -73,9 +75,7 @@ export const MovieProvider = ({ children }) => {
 
   const fetchUserMovies = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/users/me', {
-        withCredentials: true,
-      });
+      const response = await api.get('/users/me');
       setFavorites(response.data.favorites || []);
       setWatchlist(response.data.watchlists || []);
     } catch (error) {
@@ -93,7 +93,7 @@ export const MovieProvider = ({ children }) => {
     const list = listType === 'favorites' ? favorites : watchlist;
     const setList = listType === 'favorites' ? setFavorites : setWatchlist;
     const listSet = listType === 'favorites' ? favoriteSet : watchlistSet;
-    const endpoint = `http://localhost:5000/api/users/${listType}`;
+    const endpoint = `/users/${listType}`;
 
     const movieInList = listSet.has(String(movieId));
 
@@ -106,9 +106,9 @@ export const MovieProvider = ({ children }) => {
 
     try {
       if (movieInList) {
-        await axios.delete(`${endpoint}/${movieId}`, { withCredentials: true });
+        await api.delete(`${endpoint}/${movieId}`);
       } else {
-        await axios.post(
+        await api.post(
           endpoint,
           {
             movieId: movieId,
@@ -117,8 +117,7 @@ export const MovieProvider = ({ children }) => {
             release_date: movie.release_date,
             vote_average: movie.vote_average,
             genre_ids: movie.genre_ids,
-          },
-          { withCredentials: true }
+          }
         );
       }
       // Refetch to ensure data consistency after the API call
@@ -139,9 +138,7 @@ export const MovieProvider = ({ children }) => {
   const handleWatchlist = (movie) => handleMovieListAction(movie, 'watchlists');
 
   const login = async (credentials) => {
-    const response = await axios.post('http://localhost:5000/api/auth/login', credentials, {
-      withCredentials: true,
-    });
+    const response = await api.post('/auth/login', credentials);
     if (response.data.user) {
       setIsLoggedIn(true);
       await fetchUserMovies();
@@ -150,7 +147,7 @@ export const MovieProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    await axios.post('http://localhost:5000/api/auth/logout', {}, { withCredentials: true });
+    await api.post('/auth/logout', {});
     setIsLoggedIn(false);
     setFavorites([]);
     setWatchlist([]);
