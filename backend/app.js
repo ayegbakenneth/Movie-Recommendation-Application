@@ -30,6 +30,7 @@ if (frontendURL) {
 app.use(
   cors({
     origin: (origin, callback) => {
+      console.log("Request received from origin:", origin); // Log the incoming origin
       // allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
       if (allowedOrigins.indexOf(origin) === -1) {
