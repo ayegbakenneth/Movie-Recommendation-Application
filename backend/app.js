@@ -21,12 +21,7 @@ app.set('trust proxy', 1);
 
 // Security Middlewares
 app.use(helmet());
-const allowedOrigins = [
-  'http://localhost:3000',
-  new RegExp(`https://${process.env.VERCEL_URL}`),
-  new RegExp(`https://.*\.vercel\.app`)
-];
-
+const allowedOrigins = ['http://localhost:3000'];
 const frontendURL = process.env.FRONTEND_URL;
 if (frontendURL) {
   allowedOrigins.push(frontendURL);
@@ -37,26 +32,13 @@ app.use(
     origin: (origin, callback) => {
       // allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
-      
-      // Check if the origin is in the allowed list or matches the regex
-      const isAllowed = allowedOrigins.some(allowedOrigin => {
-        if (typeof allowedOrigin === 'string') {
-          return allowedOrigin === origin;
-        }
-        if (allowedOrigin instanceof RegExp) {
-          return allowedOrigin.test(origin);
-        }
-        return false;
-      });
-
-      if (isAllowed) {
-        return callback(null, true);
-      } else {
+      if (allowedOrigins.indexOf(origin) === -1) {
         const msg =
           'The CORS policy for this site does not ' +
           'allow access from the specified Origin.';
         return callback(new Error(msg), false);
       }
+      return callback(null, true);
     },
     credentials: true, // Allow cookies to be sent
   })
