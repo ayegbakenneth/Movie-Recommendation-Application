@@ -1,21 +1,25 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { MovieContext } from "../context/MovieContext";
 import '../styles/Register.css'
 
 const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { register } = useContext(MovieContext);
+  const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/auth/register", {
+      await register({
         username,
         email,
         password,
       });
       alert("Registration successful! Please log in.");
+      navigate("/login");
     } catch (error) {
       alert("Registration failed");
     }

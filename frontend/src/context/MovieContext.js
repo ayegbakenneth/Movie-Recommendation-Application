@@ -153,6 +153,10 @@ export const MovieProvider = ({ children }) => {
     setWatchlist([]);
   };
 
+  const register = async (credentials) => {
+    return api.post('/auth/register', credentials);
+  };
+
   return (
     <MovieContext.Provider
       value={{
@@ -167,6 +171,7 @@ export const MovieProvider = ({ children }) => {
         watchlistSet,
         login,
         logout,
+        register,
         searchMovies,
         noResults,
       }}
