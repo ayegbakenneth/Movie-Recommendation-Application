@@ -16,17 +16,26 @@ dotenv.config();
 const app = express();
 
 // Security Middlewares
-// app.use(helmet()); // Temporarily disabled for debugging
+app.use(helmet());
 
-// --- TEMPORARY DEBUGGING STEP ---
-// This allows ALL origins. We will secure this later.
+const allowedOrigins = ['http://localhost:3000'];
+const frontendURL = process.env.FRONTEND_URL;
+if (frontendURL) {
+  allowedOrigins.push(frontendURL);
+}
+
 app.use(
   cors({
-    origin: true, 
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   })
 );
-// ---------------------------------
 
 app.use(cookieParser());
 app.use(express.json({ limit: '10kb' })); // Limit request body size
