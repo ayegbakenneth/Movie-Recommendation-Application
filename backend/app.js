@@ -16,7 +16,7 @@ dotenv.config();
 const app = express();
 
 // Security Middlewares
-app.use(helmet());
+// app.use(helmet()); // Temporarily disabled for debugging
 
 // --- TEMPORARY DEBUGGING STEP ---
 // This allows ALL origins. We will secure this later.
