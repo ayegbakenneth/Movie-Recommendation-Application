@@ -15,14 +15,11 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'Email already registered' });
     }
 
-    // Hash the password before saving the user
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create and save the new user
+    // The password will be hashed by the pre-save hook in the User model
     const newUser = new User({
       username,
       email,
-      password: hashedPassword, // Save the hashed password
+      password: password, // Pass the plain password to the model
     });
 
     await newUser.save();
