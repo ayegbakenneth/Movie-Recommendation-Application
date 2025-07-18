@@ -13,34 +13,21 @@ const usersRoute = require('./routes/users');
 // Configuration
 dotenv.config();
 
-
 const app = express();
 
 // Security Middlewares
 app.use(helmet());
-const allowedOrigins = ['http://localhost:3000'];
-const frontendURL = process.env.FRONTEND_URL;
-if (frontendURL) {
-  allowedOrigins.push(frontendURL);
-}
 
+// --- TEMPORARY DEBUGGING STEP ---
+// This allows ALL origins. We will secure this later.
 app.use(
   cors({
-    origin: (origin, callback) => {
-      console.log("Request received from origin:", origin); // Log the incoming origin
-      // allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) === -1) {
-        const msg =
-          'The CORS policy for this site does not ' +
-          'allow access from the specified Origin.';
-        return callback(new Error(msg), false);
-      }
-      return callback(null, true);
-    },
-    credentials: true, // Allow cookies to be sent
+    origin: true, 
+    credentials: true,
   })
 );
+// ---------------------------------
+
 app.use(cookieParser());
 app.use(express.json({ limit: '10kb' })); // Limit request body size
 
