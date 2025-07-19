@@ -21,10 +21,9 @@ app.set('trust proxy', 1);
 app.use(helmet());
 
 const allowedOrigins = ['http://localhost:3000'];
-const frontendURL = process.env.FRONTEND_URL;
-if (frontendURL) {
-  allowedOrigins.push(frontendURL);
-}
+const frontendURLs = process.env.FRONTEND_URLS || "";
+const urls = frontendURLs.split(',').map(url => url.trim());
+allowedOrigins.push(...urls);
 
 app.use(
   cors({
