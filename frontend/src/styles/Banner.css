@@ -23,12 +23,15 @@
 .jh-logo {
   height: 45px;
   width: 45px;
+  margin-bottom: -15px;
 }
 
 #menu {
   display: flex;
   gap: var(--spacing-unit);
   list-style: none;
+  justify-content: center;
+  align-items: center;
 }
 
 .btn {
@@ -49,6 +52,7 @@
   font-size: 2.5rem;
   color: var(--primary-color);
   margin: var(--spacing-unit) 0;
+  margin-top: 40px;
 }
 
 @media (max-width: 768px) {
@@ -57,10 +61,17 @@
     gap: var(--spacing-unit);
   }
 
+.jh-logo {
+  height: 20px;
+  width: 20px;
+  margin-bottom: -15px;
+  }
+
   #menu {
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     width: 100%;
+    margin-top: 5px;
   }
 
   .btn {
@@ -72,5 +83,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 40px;
   margin-bottom: 20px;
 }
