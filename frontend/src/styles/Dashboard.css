@@ -50,10 +50,9 @@
 
 @media (max-height: 500px) and (orientation: landscape) {
   .dashboard-header {
-    max-height: 120px;
-    overflow-y: auto;
+    display: none; /* Hide the header in landscape */
   }
   .dashboard {
-    padding-top: 120px;
+    padding-top: 80px; /* Adjust for navbar height only */
   }
 }

@@ -117,10 +117,14 @@
 
 @media (max-height: 500px) and (orientation: landscape) {
   .home-header {
-    max-height: 120px;
-    overflow-y: auto;
+    display: none; /* Hide the header in landscape */
+  }
+  #menu.menu-open {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
   }
   .page-content {
-    padding-top: 120px;
+    padding-top: 80px; /* Adjust for navbar height only */
   }
 }
