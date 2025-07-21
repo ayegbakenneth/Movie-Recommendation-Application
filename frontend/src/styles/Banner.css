@@ -32,6 +32,7 @@
   list-style: none;
   justify-content: center;
   align-items: center;
+  margin-left: auto; /* Push menu to the right */
 }
 
 .btn {
@@ -84,6 +85,10 @@
 
   #menu.menu-open {
     display: flex; /* Show menu when toggled */
+  }
+
+  #menu li {
+    margin: 10px 0;
   }
 
   .btn {
