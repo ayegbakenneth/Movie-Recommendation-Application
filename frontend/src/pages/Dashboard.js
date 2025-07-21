@@ -20,7 +20,9 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
-      <h1 className="dashboard-title">My Dashboard</h1>
+      <div className="dashboard-header">
+        <h1 className="dashboard-title">My Dashboard</h1>
+      </div>
       <div className="movie-section">
         <h2 className="section-title">My Favorites</h2>
         <div className="movie-list">

@@ -55,34 +55,51 @@
   margin-top: 40px;
 }
 
+.menu-toggle {
+  display: none; /* Hidden by default */
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
 @media (max-width: 768px) {
   .jh-banner {
-    flex-direction: column;
-    gap: var(--spacing-unit);
+    flex-direction: row; /* Keep logo and title on one line */
+    justify-content: space-between;
   }
 
-.jh-logo {
-  height: 20px;
-  width: 20px;
-  margin-bottom: -15px;
+  .menu-toggle {
+    display: block; /* Show hamburger on mobile */
   }
 
   #menu {
-    flex-direction: row;
-    align-items: center;
+    display: none; /* Hide menu by default on mobile */
+    flex-direction: column;
     width: 100%;
-    margin-top: 5px;
+    text-align: center;
+    padding-top: var(--spacing-unit);
+  }
+
+  #menu.menu-open {
+    display: flex; /* Show menu when toggled */
   }
 
   .btn {
     width: 100%;
     text-align: center;
+    padding: var(--spacing-unit);
+    border-top: 1px solid #444;
   }
 }
 .home-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 40px;
-  margin-bottom: 20px;
+  position: sticky;
+  top: 60px; /* Height of the navbar */
+  background-color: var(--background-color); /* Match the page background */
+  padding: 20px 0;
+  z-index: 900;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 0; /* Remove top margin */
+  width: 100%;
 }

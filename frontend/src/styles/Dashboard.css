@@ -1,7 +1,19 @@
 .dashboard {
-  padding: 120px 20px 20px;
+  padding: 20px;
+  padding-top: 80px; /* Space for the fixed navbar */
   background-color: #f0f2f5;
   min-height: 100vh;
+}
+
+.dashboard-header {
+  position: sticky;
+  top: 60px; /* Height of the navbar */
+  background-color: #f0f2f5; /* Match the page background */
+  padding: 20px 0;
+  z-index: 900;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: -20px -20px 20px -20px; /* Extend to the edges */
+  padding: 20px;
 }
 
 .dashboard-title {

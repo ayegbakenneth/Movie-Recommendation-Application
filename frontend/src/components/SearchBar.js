@@ -13,16 +13,18 @@ const SearchBar = () => {
 
   return (
     <form className="search-bar" onSubmit={handleSearch}>
-      <input
-        type="text"
-        className="search-input"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search for a movie..."
-      />
-      <button type="submit" className="search-button">
-        Search
-      </button>
+      <div className="search-container">
+        <input
+          type="text"
+          className="search-input"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search for a movie..."
+        />
+        <button type="submit" className="search-button">
+          &#128269; {/* Search Icon */}
+        </button>
+      </div>
     </form>
   );
 };
