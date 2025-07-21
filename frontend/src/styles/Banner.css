@@ -98,6 +98,12 @@
     border-top: 1px solid #444;
   }
 }
+
+.movie-list {
+  position: relative;
+  z-index: 1;
+}
+
 .home-header {
   position: sticky;
   top: 60px; /* Height of the navbar */
