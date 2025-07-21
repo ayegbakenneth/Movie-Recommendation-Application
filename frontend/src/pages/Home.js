@@ -24,9 +24,8 @@ const Home = () => {
     <div className="page-content">
       <div className="home-page">
         <div className="home-header">
-          <h2 id="pageHeader">Popular Movies</h2>
-          <SearchBar />
         </div>
+        <SearchBar />
         <div className="movie-list">
           {movies.length > 0 ? (
             movies.map((movie) => (
