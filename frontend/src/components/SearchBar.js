@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { MovieContext } from '../context/MovieContext';
-import '../styles/SearchBar.css';
+import '@fortawesome/fontawesome-free/css/all.min.css'; // Import FontAwesome
+import '../styles/SearchBar.css'; // Import styles
 
 const SearchBar = () => {
   const [query, setQuery] = useState('');
@@ -22,7 +23,7 @@ const SearchBar = () => {
           placeholder="Search for a movie..."
         />
         <button type="submit" className="search-button">
-          <i className="fas fa-search"></i> {/* FontAwesome search icon */}
+          <i className="fas fa-search"></i> {/* FontAwesome Icon */}
         </button>
       </div>
     </form>
