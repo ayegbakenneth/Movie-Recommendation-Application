@@ -5,12 +5,6 @@
   width: 100%;
 }
 
-.search-container {
-  position: relative;
-  width: 100%;
-  max-width: 500px;
-}
-
 .search-input {
   width: 100%;
   padding: 12px 20px;
