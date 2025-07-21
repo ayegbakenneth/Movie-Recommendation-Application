@@ -12,8 +12,8 @@ const SearchBar = () => {
   };
 
   return (
-    <form className="search-bar" onSubmit={handleSearch}>
-      <div className="search-container">
+  
+      <div className="search-container search-bar" onSubmit={handleSearch}>
         <input
           type="text"
           className="search-input"
@@ -25,7 +25,6 @@ const SearchBar = () => {
           &#128269; {/* Search Icon */}
         </button>
       </div>
-    </form>
   );
 };
 
