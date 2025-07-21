@@ -114,3 +114,13 @@
   margin-top: 0; /* Remove top margin */
   width: 100%;
 }
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .home-header {
+    max-height: 120px;
+    overflow-y: auto;
+  }
+  .page-content {
+    padding-top: 120px;
+  }
+}

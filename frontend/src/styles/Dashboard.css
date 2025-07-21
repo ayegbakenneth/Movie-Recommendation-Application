@@ -47,3 +47,13 @@
   position: relative;
   z-index: 1;
 }
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .dashboard-header {
+    max-height: 120px;
+    overflow-y: auto;
+  }
+  .dashboard {
+    padding-top: 120px;
+  }
+}
