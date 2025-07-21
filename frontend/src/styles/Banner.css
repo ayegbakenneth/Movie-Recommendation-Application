@@ -94,7 +94,8 @@
   .btn {
     width: 100%;
     text-align: center;
-    padding: var(--spacing-unit);
+    padding: calc(var(--spacing-unit) / 2); /* Reduced padding */
+    font-size: 0.9rem; /* Reduced font size */
     border-top: 1px solid #444;
   }
 }
